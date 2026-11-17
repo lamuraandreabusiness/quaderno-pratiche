@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quaderno delle pratiche</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --desk:#d9cbb4;
+    --paper:#fffdf6;
+    --line:#cfe0ee;
+    --margin:#ef9a9a;
+    --ink:#2b2d42;
+    --ink-soft:#5c5f77;
+    --pencil:#8a8da3;
+    --lh:32px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Kalam',cursive;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.015) 0 3px, transparent 3px 9px),
+      var(--desk);
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  button,input,select,textarea{font-family:inherit;color:inherit}
+
+  /* ---------- notebook ---------- */
+  .notebook{
+    position:relative;
+    max-width:780px;
+    margin:0 auto;
+  }
+  .page{
+    position:relative;
+    background:
+      linear-gradient(90deg, transparent 70px, var(--margin) 70px, var(--margin) 72px, transparent 72px),
+      repeating-linear-gradient(180deg, transparent 0 calc(var(--lh) - 1px), var(--line) calc(var(--lh) - 1px) var(--lh)),
+      var(--paper);
+    background-position:0 0, 0 18px, 0 0;
+    border-radius:4px 14px 14px 4px;
+    box-shadow:
+      0 1px 0 #e9e3d3,
+      0 2px 0 #fbf8ee,
+      0 3px 0 #e6dfcd,
+      0 4px 0 #f9f6ec,
+      0 18px 40px rgba(60,40,10,.25);
+    min-height:640px;
+    padding:26px 34px 40px 96px;
+    line-height:var(--lh);
+    font-size:18px;
+  }
+  /* spiral */
+  .spiral{
+    position:absolute; left:-14px; top:20px; bottom:20px; width:44px;
+    background:
+      radial-gradient(circle at 30px 16px, #6b6458 0 6px, transparent 7px),
+      radial-gradient(ellipse 22px 6px at 14px 16px, #9b9384 0 70%, transparent 72%);
+    background-size:44px 32px;
+    background-repeat:repeat-y;
+    pointer-events:none;
+    z-index:2;
+  }
+  /* index tabs on the right edge */
+  .tabs{
+    position:absolute; right:-34px; top:70px;
+    display:flex; flex-direction:column; gap:6px;
+    z-index:0;
+  }
+  .tab{
+    width:46px; min-height:64px;
+    border:none; cursor:pointer;
+    border-radius:0 10px 10px 0;
+    writing-mode:vertical-rl;
+    font-family:'Caveat',cursive; font-size:17px; font-weight:700;
+    color:#fff; padding:8px 0 8px 10px;
+    text-align:center; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+    max-height:120px;
+    box-shadow:2px 3px 6px rgba(0,0,0,.18);
+    transition:transform .15s;
+  }
+  .tab:hover,.tab.active{transform:translateX(8px)}
+  .page{z-index:1}
+
+  h1,h2,h3{font-family:'Caveat',cursive; font-weight:700; margin:0}
+  h1{font-size:48px; line-height:64px}
+  h2{font-size:34px; line-height:var(--lh); margin-top:var(--lh)}
+  .date{color:var(--ink-soft); font-size:17px}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .spacer{flex:1}
+
+  /* buttons */
+  .btn{
+    border:2px solid var(--ink); background:transparent;
+    border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+    padding:2px 16px; font-size:17px; line-height:28px; cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .btn:hover{background:rgba(43,45,66,.06)}
+  .btn:active{transform:translateY(1px)}
+  .btn.solid{background:var(--ink); color:var(--paper)}
+  .btn.solid:hover{background:#3b3e5a}
+  .btn.ghost{border-color:transparent; color:var(--ink-soft); padding:2px 8px}
+  .btn.ghost:hover{color:var(--ink); background:transparent; text-decoration:underline}
+  .btn.danger{border-color:#c0392b; color:#c0392b}
+  .btn:focus-visible,.tab:focus-visible,.idx-item:focus-visible,.pr-item:focus-visible{outline:3px solid #f3c64b; outline-offset:2px}
+
+  .crumb{font-size:16px; color:var(--ink-soft)}
+  .crumb button{background:none;border:none;padding:0;cursor:pointer;color:var(--ink-soft);font-size:16px;text-decoration:underline;text-underline-offset:3px}
+
+  /* sticky note: daily suggestion */
+  .note{
+    position:relative;
+    background:#fff3a8;
+    background-image:linear-gradient(180deg, rgba(255,255,255,.4), transparent 30%);
+    padding:22px 24px 18px;
+    margin:var(--lh) 0 0;
+    transform:rotate(-1.2deg);
+    box-shadow:0 10px 18px -8px rgba(80,60,0,.35);
+    max-width:520px;
+    line-height:26px;
+  }
+  .note::before{ /* tape */
+    content:""; position:absolute; top:-12px; left:50%; width:110px; height:26px;
+    transform:translateX(-50%) rotate(2deg);
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.05);
+  }
+  .note .label{font-family:'Caveat',cursive; font-size:22px; color:#8a6d00}
+  .note .title{font-family:'Caveat',cursive; font-size:34px; font-weight:700; line-height:38px; margin:4px 0}
+  .note .why{font-size:16px; color:#5a4c10}
+  .note .row{margin-top:12px}
+  .note .btn{font-size:16px}
+  .note.done{background:#d8f0c8}
+  .note.done .label{color:#3d6b2a}
+
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:14px; line-height:22px; padding:0 10px; border-radius:20px;
+    color:#fff; vertical-align:middle;
+  }
+  .tag{
+    display:inline-block; font-size:14px; line-height:22px; padding:0 9px;
+    border:1.5px dashed var(--pencil); border-radius:12px; color:var(--ink-soft);
+  }
+
+  /* index */
+  .idx{list-style:none; margin:0; padding:0}
+  .idx-item{
+    display:flex; align-items:baseline; gap:10px; width:100%;
+    background:none; border:none; padding:0; cursor:pointer; text-align:left;
+    font-size:22px; line-height:var(--lh);
+  }
+  .idx-item .num{font-family:'Caveat',cursive; font-size:24px; color:var(--pencil); width:28px}
+  .idx-item .dot{width:14px;height:14px;border-radius:50%;flex:none;align-self:center}
+  .idx-item .name{font-family:'Caveat',cursive; font-size:28px; font-weight:700}
+  .idx-item .lead{flex:1; border-bottom:2px dotted var(--pencil); transform:translateY(-6px)}
+  .idx-item .cnt{font-size:16px; color:var(--ink-soft)}
+  .idx-item:hover .name{text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:4px}
+
+  .today-sum{font-size:16px; color:var(--ink-soft); margin-top:8px}
+
+  /* category page */
+  .cat-head{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    margin:6px 0 0;
+  }
+  .cat-head h1{position:relative}
+  .marker{
+    background-image:linear-gradient(transparent 55%, var(--hl) 55%, var(--hl) 88%, transparent 88%);
+    padding:0 6px;
+  }
+  .pr-list{list-style:none; margin:var(--lh) 0 0; padding:0}
+  .pr-item{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:none; border:none; cursor:pointer; text-align:left;
+    padding:0; min-height:calc(var(--lh) * 2); line-height:var(--lh);
+  }
+  .pr-item .bullet{width:22px;height:22px;border:2px solid var(--c);border-radius:5px;flex:none;display:grid;place-items:center;color:var(--c);font-weight:700}
+  .pr-item .t{font-family:'Caveat',cursive;font-size:28px;font-weight:700;line-height:30px}
+  .pr-item .meta{font-size:15px;color:var(--ink-soft);line-height:20px}
+  .pr-item:hover .t{text-decoration:underline;text-underline-offset:4px}
+
+  /* practice page */
+  .pr-title{font-size:52px; line-height:64px}
+  .field{margin-top:var(--lh)}
+  .field .lbl{
+    font-family:'Caveat',cursive; font-size:24px; font-weight:700; color:var(--c, var(--ink));
+    display:block;
+  }
+  .field .val{white-space:pre-wrap; font-size:18px}
+  .field .val.empty{color:var(--pencil); font-style:italic}
+  .freq-big{display:inline-block; font-size:18px; border:2px solid var(--c); border-radius:20px; padding:0 14px; line-height:28px}
+
+  .log{
+    margin-top:calc(var(--lh) * 1.5);
+    border-top:2px dashed var(--pencil);
+    padding-top:var(--lh);
+  }
+  .stamp{
+    border:3px solid var(--c); color:var(--c); background:transparent;
+    font-family:'Caveat',cursive; font-size:30px; font-weight:700;
+    padding:6px 26px; border-radius:12px; cursor:pointer;
+    transform:rotate(-2deg); transition:transform .12s, background .15s;
+  }
+  .stamp:hover{transform:rotate(0) scale(1.03); background:color-mix(in srgb, var(--c) 10%, transparent)}
+  .stamp.done{background:var(--c); color:#fff}
+  .log-list{list-style:none; padding:0; margin:12px 0 0; font-size:16px}
+  .log-list li{display:flex; gap:10px; align-items:center}
+  .log-list li::before{content:"✓"; color:var(--c); font-weight:700}
+  .stats{font-size:16px; color:var(--ink-soft)}
+
+  /* forms */
+  .form .f{margin-top:18px}
+  .form label{display:block; font-family:'Caveat',cursive; font-size:24px; font-weight:700; line-height:30px}
+  .form .hint{font-size:14px; color:var(--ink-soft); line-height:18px; margin-bottom:4px}
+  .form input[type=text],.form select,.form textarea,.form input[type=date]{
+    width:100%; font-size:18px; line-height:28px;
+    background:rgba(255,255,255,.7);
+    border:none; border-bottom:2px solid var(--pencil);
+    padding:4px 6px; border-radius:4px 4px 0 0;
+  }
+  .form textarea{min-height:96px; resize:vertical}
+  .form input:focus,.form select:focus,.form textarea:focus{outline:none; border-bottom-color:var(--ink); background:#fff}
+  .custom-row{display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:12px; padding:10px; border:1.5px dashed var(--pencil); border-radius:8px; background:rgba(255,255,255,.5)}
+  .custom-row .val-in{grid-column:1 / -1}
+  .swatches{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+  .sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+  .sw[aria-checked=true]{border-color:var(--ink)}
+  .newcat{margin-top:10px; padding:12px; border:1.5px dashed var(--pencil); border-radius:8px; background:rgba(255,255,255,.5)}
+  .err{color:#c0392b; font-size:15px; margin-top:6px; min-height:20px}
+
+  .empty-state{margin-top:var(--lh); color:var(--ink-soft)}
+  .empty-state p{margin:0}
+
+  .footer{max-width:780px; margin:16px auto 0; font-size:14px; color:#6d5f48; text-align:center}
+
+  /* modal + toast */
+  .overlay{position:fixed; inset:0; background:rgba(40,30,15,.4); display:none; align-items:center; justify-content:center; padding:20px; z-index:50}
+  .overlay.open{display:flex}
+  .dialog{background:var(--paper); max-width:420px; width:100%; padding:24px; border-radius:10px; box-shadow:0 20px 50px rgba(0,0,0,.3); line-height:26px}
+  .dialog h3{font-size:30px; margin-bottom:8px}
+  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(120px); background:var(--ink); color:var(--paper); padding:8px 18px; border-radius:20px; font-size:16px; transition:transform .25s; z-index:60}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  .loading{color:var(--ink-soft); margin-top:var(--lh)}
+
+  @media (max-width:700px){
+    body{padding:14px 8px 40px}
+    .page{padding:18px 16px 30px 52px; font-size:17px; background:
+      linear-gradient(90deg, transparent 40px, var(--margin) 40px, var(--margin) 42px, transparent 42px),
+      repeating-linear-gradient(180deg, transparent 0 calc(var(--lh) - 1px), var(--line) calc(var(--lh) - 1px) var(--lh)),
+      var(--paper);}
+    .spiral{left:-10px; width:34px; background:
+      radial-gradient(circle at 22px 16px, #6b6458 0 5px, transparent 6px),
+      radial-gradient(ellipse 16px 5px at 10px 16px, #9b9384 0 70%, transparent 72%);
+      background-size:34px 32px;}
+    .tabs{display:none}
+    h1{font-size:40px; line-height:56px}
+    .pr-title{font-size:42px; line-height:52px}
+    .note{transform:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="notebook">
+  <div class="spiral" aria-hidden="true"></div>
+  <nav class="tabs" id="tabs" aria-label="Categorie"></nav>
+  <main class="page" id="page"><p class="loading">Apro il quaderno…</p></main>
+</div>
+<p class="footer" id="footer"></p>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="dialog">
+    <h3 id="dlgTitle"></h3>
+    <p id="dlgText" style="margin:0 0 16px"></p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn ghost" id="dlgNo">Annulla</button>
+      <button class="btn danger" id="dlgYes">Elimina</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- costanti ---------------- */
+  const FREQ = [
+    {v:"giorno",      l:"Ogni giorno"},
+    {v:"settimana",   l:"Una volta a settimana"},
+    {v:"bisogno",     l:"Al bisogno"},
+    {v:"anno",        l:"Una volta l'anno"},
+    {v:"inizio-anno", l:"A inizio anno"}
+  ];
+  const COLORS = [
+    {n:"Corallo", c:"#e2674f"}, {n:"Arancio", c:"#e8933a"}, {n:"Senape", c:"#c99d1c"},
+    {n:"Salvia",  c:"#5f9450"}, {n:"Petrolio",c:"#2a8a85"}, {n:"Blu",     c:"#3d6fb6"},
+    {n:"Viola",   c:"#7b5ea7"}, {n:"Rosa",    c:"#cf5f8f"}
+  ];
+  const STARTER = [
+    {name:"Respiro", color:"#2a8a85"}, {name:"Meditazione", color:"#7b5ea7"},
+    {name:"Scrittura", color:"#e8933a"}, {name:"Corpo e movimento", color:"#5f9450"},
+    {name:"Coaching", color:"#3d6fb6"}
+  ];
+  const LOCAL_KEY = "quaderno-pratiche-v1";
+
+  /* ---------------- stato ---------------- */
+  const items = new Map();          // id -> oggetto (cat o pr)
+  let mode = "loading";             // loading | db | local
+  let col = null;                   // collection db
+  const queues = {};
+  const ui = { view:"home", catId:null, prId:null, editId:null, presetCat:null, sugOffset:0, showOtherDate:false };
+
+  const $ = s => document.querySelector(s);
+  const pageEl = $("#page");
+
+  /* ---------------- utilità ---------------- */
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const uid = p => p + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const pad = n => String(n).padStart(2,"0");
+  const dayKey = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  const startOf = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const daysBetween = (a,b) => Math.round((startOf(b) - startOf(a)) / 86400000);
+  const freqLabel = v => (FREQ.find(f=>f.v===v)||{l:"—"}).l;
+  const fmtDate = d => d.toLocaleDateString("it-IT",{weekday:"long", day:"numeric", month:"long"});
+  const fmtDateTime = iso => { const d=new Date(iso); return d.toLocaleDateString("it-IT",{day:"numeric",month:"short",year:"numeric"}) + (iso.length>10 ? " · " + d.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"}) : ""); };
+  function ago(n){
+    if(n===0) return "oggi"; if(n===1) return "ieri";
+    if(n<45) return n+" giorni fa";
+    const m=Math.round(n/30); if(m<12) return m+" mesi fa";
+    const y=Math.round(n/365); return y===1?"un anno fa":y+" anni fa";
+  }
+  function hash(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+  function parseLog(s){ return s.length===10 ? new Date(s+"T12:00:00") : new Date(s); }
+
+  const cats = () => [...items.entries()].filter(([,o])=>o.type==="cat").map(([id,o])=>({id,...o}))
+                      .sort((a,b)=>(a.order??0)-(b.order??0) || String(a.created).localeCompare(String(b.created)));
+  const practices = catId => [...items.entries()].filter(([,o])=>o.type==="pr" && (!catId || o.catId===catId)).map(([id,o])=>({id,...o}))
+                      .sort((a,b)=>String(a.title).localeCompare(String(b.title),"it"));
+  const catOf = id => { const o=items.get(id); return o && o.type==="cat" ? {id,...o} : null; };
+  const lastDone = p => { const l=(p.log||[]); if(!l.length) return null; return l.map(parseLog).sort((a,b)=>b-a)[0]; };
+
+  /* ---------------- salvataggio ---------------- */
+  function saveLocal(){
+    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(Object.fromEntries(items))); }
+    catch(e){ toast("Non riesco a salvare in questo browser"); }
+  }
+  function loadLocal(){
+    try{ const raw=localStorage.getItem(LOCAL_KEY); if(raw){ const o=JSON.parse(raw); for(const k in o) items.set(k,o[k]); } }catch(e){}
+  }
+  function handleErr(e){
+    const code = e && e.code;
+    if(code==="invalid_argument") toast("Salvataggio non riuscito: hai accesso in sola lettura");
+    else if(code==="quota_exceeded") toast("Spazio del quaderno esaurito: elimina qualche pratica");
+    else if(code==="revoked") toast("Accesso al quaderno revocato");
+    else toast("Salvataggio non riuscito, riprova tra poco");
+  }
+  function persist(id, obj){
+    items.set(id, obj);
+    if(mode==="db"){
+      queues[id] = (queues[id]||Promise.resolve()).then(()=>col.doc(id).set(obj)).catch(e=>{
+        if(e && e.code==="unavailable") return new Promise(r=>setTimeout(r,600+Math.random()*800)).then(()=>col.doc(id).set(obj)).catch(handleErr);
+        handleErr(e);
+      });
+    } else saveLocal();
+  }
+  function removeItem(id){
+    items.delete(id);
+    if(mode==="db"){ queues[id] = (queues[id]||Promise.resolve()).then(()=>col.doc(id).delete()).catch(handleErr); }
+    else saveLocal();
+  }
+
+  /* ---------------- suggerimento del giorno ---------------- */
+  function scoreOf(p, now){
+    const last = lastDone(p);
+    const since = last ? daysBetween(last, now) : Infinity;
+    if(since===0) return {s:-1};
+    const never = since===Infinity;
+    switch(p.frequenza){
+      case "giorno": return {s:100, why: never ? "È una pratica quotidiana e non l'hai ancora mai registrata." : "È una pratica quotidiana e oggi non l'hai ancora fatta."};
+      case "settimana":
+        if(never) return {s:85, why:"È settimanale e non l'hai ancora mai registrata."};
+        return since>=7 ? {s:80+Math.min(since-7,15), why:`È settimanale: l'ultima volta è stata ${ago(since)}.`} : {s:5+since, why:`L'hai fatta ${ago(since)}: puoi ripeterla se ti serve.`};
+      case "anno":
+        if(never) return {s:40, why:"È una pratica annuale che non hai ancora registrato."};
+        return since>=365 ? {s:75, why:`È passato un anno dall'ultima volta (${ago(since)}).`} : {s:0};
+      case "inizio-anno": {
+        const thisYear = (p.log||[]).some(x=>parseLog(x).getFullYear()===now.getFullYear());
+        if(now.getMonth()<=1 && !thisYear) return {s:95, why:"È inizio anno: il momento giusto per questa pratica."};
+        if(now.getMonth()===11) return {s:15, why:"L'anno sta per chiudersi: puoi prepararla."};
+        return {s:0};
+      }
+      default: { // al bisogno
+        const d = never ? 30 : since;
+        return {s:20+Math.min(d,40), why: never ? "Non l'hai ancora provata: oggi può essere il giorno." : `Da usare al bisogno: l'ultima volta è stata ${ago(since)}.`};
+      }
+    }
+  }
+  function suggestion(){
+    const now=new Date();
+    const all = practices().map(p=>({p,...scoreOf(p,now)}));
+    const cand = all.filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+    if(!cand.length) return {none:true, total:all.length};
+    const top = cand[0].s;
+    const pool = cand.filter(x=>x.s >= top*0.6).slice(0,6);
+    const pool2 = pool.length>1 ? pool : cand.slice(0,Math.min(5,cand.length));
+    const idx = (hash(dayKey(now)) + ui.sugOffset) % pool2.length;
+    return {pick:pool2[idx], count:pool2.length};
+  }
+
+  /* ---------------- render ---------------- */
+  function render(){
+    renderTabs();
+    renderFooter();
+    if(mode==="loading"){ pageEl.innerHTML = `<p class="loading">Apro il quaderno…</p>`; return; }
+    const v = ui.view;
+    if(v==="cat" && !catOf(ui.catId)) ui.view="home";
+    if(v==="pr" && !items.get(ui.prId)) ui.view = ui.catId && catOf(ui.catId) ? "cat" : "home";
+    ({home:renderHome, cat:renderCat, pr:renderPr, edit:renderEdit, editcat:renderEditCat}[ui.view])();
+  }
+  function go(view, extra){ Object.assign(ui, {view}, extra||{}); ui.showOtherDate=false; render(); try{ window.scrollTo({top:0}); }catch(e){} }
+
+  function renderTabs(){
+    const t=$("#tabs");
+    t.innerHTML = cats().map(c=>`<button class="tab ${ui.catId===c.id && (ui.view==="cat"||ui.view==="pr")?"active":""}" style="background:${esc(c.color)}" data-act="open-cat" data-id="${esc(c.id)}" title="${esc(c.name)}">${esc(c.name)}</button>`).join("");
+  }
+  function renderFooter(){
+    const f=$("#footer");
+    f.textContent = mode==="db" ? "Le pratiche sono salvate sul tuo account: le ritrovi da qualsiasi dispositivo."
+                 : mode==="local" ? "Le pratiche sono salvate solo in questo browser."
+                 : "";
+  }
+
+  function renderHome(){
+    const now=new Date();
+    const cs=cats();
+    const all=practices();
+    let html = `<h1>Quaderno delle pratiche</h1><div class="date">${esc(fmtDate(now))}</div>`;
+
+    // suggerimento
+    if(all.length){
+      const s=suggestion();
+      if(s.none){
+        html += `<aside class="note done"><div class="label">Pratica del giorno</div>
+          <div class="title">Tutto fatto per oggi ✓</div>
+          <div class="why">Le pratiche in programma oggi sono già registrate. Se ne senti il bisogno, sfoglia l'indice.</div></aside>`;
+      } else {
+        const p=s.pick.p, c=catOf(p.catId);
+        html += `<aside class="note" aria-label="Pratica del giorno"><div class="label">✎ Pratica del giorno</div>
+          <div class="title">${esc(p.title)}</div>
+          <div>${c?`<span class="chip" style="background:${esc(c.color)}">${esc(c.name)}</span>`:""} <span class="tag">${esc(freqLabel(p.frequenza))}</span></div>
+          <div class="why" style="margin-top:6px">${esc(s.pick.why)}</div>
+          ${p.obiettivo?`<div class="why" style="margin-top:4px"><b>Obiettivo:</b> ${esc(p.obiettivo.length>140?p.obiettivo.slice(0,140)+"…":p.obiettivo)}</div>`:""}
+          <div class="row">
+            <button class="btn solid" data-act="open-pr" data-id="${esc(p.id)}">Apri la pratica</button>
+            <button class="btn" data-act="done" data-id="${esc(p.id)}">✓ Fatta</button>
+            ${s.count>1?`<button class="btn ghost" data-act="next-sug">Un'altra →</button>`:""}
+          </div></aside>`;
+      }
+      const daily = all.filter(p=>p.frequenza==="giorno");
+      if(daily.length){
+        const doneT = daily.filter(p=>{const l=lastDone(p); return l && daysBetween(l,now)===0;}).length;
+        html += `<div class="today-sum">Pratiche quotidiane: ${doneT} su ${daily.length} fatte oggi</div>`;
+      }
+    }
+
+    // indice
+    html += `<h2>Indice</h2>`;
+    if(!cs.length){
+      html += `<div class="empty-state"><p>Il quaderno è ancora bianco.</p>
+        <p>Comincia creando le categorie in cui raccogliere le tue pratiche, oppure parti da alcune già pronte.</p>
+        <div class="row" style="margin-top:12px">
+          <button class="btn solid" data-act="new-cat">+ Nuova categoria</button>
+          <button class="btn" data-act="starter">Usa categorie di esempio</button>
+        </div></div>`;
+    } else {
+      html += `<ol class="idx">` + cs.map((c,i)=>{
+        const n = practices(c.id).length;
+        return `<li><button class="idx-item" data-act="open-cat" data-id="${esc(c.id)}">
+          <span class="num">${i+1}.</span><span class="dot" style="background:${esc(c.color)}"></span>
+          <span class="name" style="color:${esc(c.color)}">${esc(c.name)}</span><span class="lead"></span>
+          <span class="cnt">${n===1?"1 pratica":n+" pratiche"}</span></button></li>`;
+      }).join("") + `</ol>
+        <div class="row" style="margin-top:var(--lh)">
+          <button class="btn solid" data-act="new-pr">+ Nuova pratica</button>
+          <button class="btn" data-act="new-cat">+ Nuova categoria</button>
+        </div>`;
+    }
+    pageEl.innerHTML = html;
+  }
+
+  function renderCat(){
+    const c=catOf(ui.catId); const ps=practices(c.id); const now=new Date();
+    let html = `<div class="crumb"><button data-act="home">← Indice</button></div>
+      <div class="cat-head" style="--hl:${esc(c.color)}55">
+        <h1><span class="marker">${esc(c.name)}</span></h1>
+        <span class="spacer"></span>
+        <button class="btn ghost" data-act="edit-cat" data-id="${esc(c.id)}">Modifica</button>
+        <button class="btn ghost" data-act="del-cat" data-id="${esc(c.id)}">Elimina</button>
+      </div>`;
+    if(!ps.length){
+      html += `<div class="empty-state"><p>Nessuna pratica in questa categoria, per ora.</p></div>`;
+    } else {
+      html += `<ul class="pr-list">` + ps.map(p=>{
+        const l=lastDone(p); const since = l?daysBetween(l,now):null;
+        const doneToday = since===0;
+        return `<li><button class="pr-item" style="--c:${esc(c.color)}" data-act="open-pr" data-id="${esc(p.id)}">
+          <span class="bullet" aria-hidden="true">${doneToday?"✓":""}</span>
+          <span><span class="t">${esc(p.title)}</span><br>
+          <span class="meta">${esc(freqLabel(p.frequenza))} · ${l?"ultima volta "+ago(since):"mai registrata"}</span></span>
+        </button></li>`;
+      }).join("") + `</ul>`;
+    }
+    html += `<div class="row" style="margin-top:var(--lh)"><button class="btn solid" data-act="new-pr" data-cat="${esc(c.id)}">+ Nuova pratica in ${esc(c.name)}</button></div>`;
+    pageEl.innerHTML = html;
+  }
+
+  function renderPr(){
+    const o=items.get(ui.prId); const p={id:ui.prId,...o}; const c=catOf(p.catId)||{name:"Senza categoria",color:"#5c5f77",id:null};
+    ui.catId = c.id;
+    const now=new Date();
+    const log=(p.log||[]).slice().sort((a,b)=>parseLog(b)-parseLog(a));
+    const l = log.length?parseLog(log[0]):null;
+    const doneToday = l && daysBetween(l,now)===0;
+    const field = (lbl,val) => `<div class="field"><span class="lbl">${esc(lbl)}</span><div class="val ${val?"":"empty"}">${val?esc(val):"— da scrivere —"}</div></div>`;
+    // streak (giorni consecutivi) per pratiche quotidiane
+    let streak=0;
+    if(p.frequenza==="giorno" && log.length){
+      const days=new Set(log.map(x=>dayKey(parseLog(x))));
+      const d=startOf(now); if(!days.has(dayKey(d))) d.setDate(d.getDate()-1);
+      while(days.has(dayKey(d))){ streak++; d.setDate(d.getDate()-1); }
+    }
+    let html = `<div class="crumb"><button data-act="home">Indice</button> › ${c.id?`<button data-act="open-cat" data-id="${esc(c.id)}">${esc(c.name)}</button>`:esc(c.name)}</div>
+      <div style="--c:${esc(c.color)}">
+      <h1 class="pr-title">${esc(p.title)}</h1>
+      <div class="row"><span class="chip" style="background:${esc(c.color)}">${esc(c.name)}</span><span class="spacer"></span>
+        <button class="btn ghost" data-act="edit-pr" data-id="${esc(p.id)}">Modifica</button>
+        <button class="btn ghost" data-act="del-pr" data-id="${esc(p.id)}">Elimina</button></div>
+      ${field("Obiettivo della pratica", p.obiettivo)}
+      ${field("Svolgimento", p.svolgimento)}
+      <div class="field"><span class="lbl">Ogni quanto</span><span class="freq-big">${esc(freqLabel(p.frequenza))}</span></div>
+      ${field("Esempio di utilizzo", p.esempio)}
+      ${(p.campi||[]).filter(f=>f.label||f.value).map(f=>field(f.label||"Campo", f.value)).join("")}
+      <section class="log" aria-label="Registro">
+        <div class="row">
+          <button class="stamp ${doneToday?"done":""}" data-act="done" data-id="${esc(p.id)}">${doneToday?"✓ Fatta oggi":"Registra: fatta oggi"}</button>
+          ${doneToday?`<button class="btn ghost" data-act="undo" data-id="${esc(p.id)}">annulla l'ultima</button>`:""}
+          <button class="btn ghost" data-act="other-date">${ui.showOtherDate?"chiudi":"+ altra data"}</button>
+        </div>
+        ${ui.showOtherDate?`<div class="row form" style="margin-top:12px"><input type="date" id="otherDate" max="${dayKey(now)}" value="${dayKey(new Date(now.getTime()-86400000))}" style="max-width:200px"><button class="btn" data-act="save-date" data-id="${esc(p.id)}">Registra</button></div>`:""}
+        <div class="stats" style="margin-top:10px">${log.length? `Fatta ${log.length===1?"1 volta":log.length+" volte"} · ultima ${ago(daysBetween(l,now))}${streak>1?` · ${streak} giorni di fila`:""}` : "Non ancora registrata."}</div>
+        ${log.length?`<ul class="log-list">${log.slice(0,10).map(x=>`<li>${esc(fmtDateTime(x))}</li>`).join("")}</ul>${log.length>10?`<div class="stats">…e altre ${log.length-10}</div>`:""}`:""}
+      </section></div>`;
+    pageEl.innerHTML = html;
+  }
+
+  /* ---------- form pratica ---------- */
+  let draft=null;
+  function renderEdit(){
+    const cs=cats();
+    if(!draft){
+      if(ui.editId && items.get(ui.editId)) draft = clone(items.get(ui.editId));
+      else draft = {type:"pr", catId: ui.presetCat || (cs[0]&&cs[0].id) || "__new", title:"", obiettivo:"", svolgimento:"", frequenza:"giorno", esempio:"", campi:[], log:[]};
+      if(!cs.length) draft.catId="__new";
+      draft._newCatColor = draft._newCatColor || COLORS[cs.length % COLORS.length].c;
+    }
+    const d=draft;
+    const isNew = !ui.editId;
+    pageEl.innerHTML = `<div class="crumb"><button data-act="cancel-edit">← ${isNew?"Annulla":"Torna alla pratica"}</button></div>
+      <h1>${isNew?"Nuova pratica":"Modifica pratica"}</h1>
+      <form class="form" id="prForm" novalidate>
+        <div class="f"><label for="fCat">Categoria</label>
+          <select id="fCat">${cs.map(c=>`<option value="${esc(c.id)}" ${d.catId===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}<option value="__new" ${d.catId==="__new"?"selected":""}>+ Nuova categoria…</option></select>
+          <div class="newcat" id="newCatBox" ${d.catId==="__new"?"":"hidden"}>
+            <input type="text" id="fNewCat" placeholder="Nome della nuova categoria" value="${esc(d._newCatName||"")}">
+            <div class="swatches" role="radiogroup" aria-label="Colore">${COLORS.map(x=>`<button type="button" class="sw" role="radio" aria-label="${x.n}" aria-checked="${d._newCatColor===x.c}" data-act="pick-new-color" data-c="${x.c}" style="background:${x.c}"></button>`).join("")}</div>
+          </div>
+        </div>
+        <div class="f"><label for="fTitle">Nome della pratica</label><input type="text" id="fTitle" value="${esc(d.title)}" placeholder="Es. Respirazione quadrata"></div>
+        <div class="f"><label for="fObj">Obiettivo della pratica</label><textarea id="fObj" placeholder="A cosa serve, cosa ti aiuta a ottenere">${esc(d.obiettivo)}</textarea></div>
+        <div class="f"><label for="fSteps">Svolgimento</label><div class="hint">Un passaggio per riga, se ti aiuta.</div><textarea id="fSteps" style="min-height:140px" placeholder="1. …&#10;2. …">${esc(d.svolgimento)}</textarea></div>
+        <div class="f"><label for="fFreq">Ogni quanto</label><select id="fFreq">${FREQ.map(f=>`<option value="${f.v}" ${d.frequenza===f.v?"selected":""}>${f.l}</option>`).join("")}</select></div>
+        <div class="f"><label for="fEx">Esempio di utilizzo</label><textarea id="fEx" placeholder="Una situazione concreta in cui usarla">${esc(d.esempio)}</textarea></div>
+        <div class="f"><label>Campi personalizzati</label><div class="hint">Aggiungi quello che ti serve: fonte, durata, materiali, note…</div>
+          <div id="customBox">${(d.campi||[]).map((f,i)=>`<div class="custom-row">
+            <input type="text" data-cf="label" data-i="${i}" value="${esc(f.label)}" placeholder="Nome del campo (es. Fonte)" aria-label="Nome del campo">
+            <button type="button" class="btn ghost" data-act="rm-field" data-i="${i}" aria-label="Rimuovi campo">✕</button>
+            <textarea class="val-in" data-cf="value" data-i="${i}" placeholder="Contenuto" aria-label="Contenuto del campo" style="min-height:60px">${esc(f.value)}</textarea></div>`).join("")}</div>
+          <button type="button" class="btn" style="margin-top:10px" data-act="add-field">+ Aggiungi campo</button>
+        </div>
+        <div class="err" id="formErr"></div>
+        <div class="row" style="margin-top:12px"><button type="submit" class="btn solid">Salva nel quaderno</button><button type="button" class="btn ghost" data-act="cancel-edit">Annulla</button></div>
+      </form>`;
+    const sel=$("#fCat");
+    sel.addEventListener("change",()=>{ syncDraft(); $("#newCatBox").hidden = sel.value!=="__new"; if(sel.value==="__new") $("#fNewCat").focus(); });
+    $("#prForm").addEventListener("submit", e=>{ e.preventDefault(); savePractice(); });
+    setTimeout(()=>{ const t=$("#fTitle"); if(t && !d.title) t.focus(); },30);
+  }
+  function syncDraft(){
+    if(!draft || !$("#prForm")) return;
+    draft.catId=$("#fCat").value; draft._newCatName=$("#fNewCat").value;
+    draft.title=$("#fTitle").value; draft.obiettivo=$("#fObj").value; draft.svolgimento=$("#fSteps").value;
+    draft.frequenza=$("#fFreq").value; draft.esempio=$("#fEx").value;
+    document.querySelectorAll("[data-cf]").forEach(el=>{ const i=+el.dataset.i; if(draft.campi[i]) draft.campi[i][el.dataset.cf]=el.value; });
+  }
+  function savePractice(){
+    syncDraft();
+    const d=draft; const err=$("#formErr");
+    if(!d.title.trim()){ err.textContent="Dai un nome alla pratica."; $("#fTitle").focus(); return; }
+    let catId=d.catId;
+    if(catId==="__new"){
+      const name=(d._newCatName||"").trim();
+      if(!name){ err.textContent="Scrivi il nome della nuova categoria."; $("#fNewCat").focus(); return; }
+      catId=uid("cat");
+      persist(catId,{type:"cat", name, color:d._newCatColor, order:cats().length, created:new Date().toISOString()});
+    }
+    const id = ui.editId || uid("pr");
+    const prev = ui.editId ? items.get(ui.editId) : null;
+    const obj = {type:"pr", catId, title:d.title.trim(), obiettivo:d.obiettivo.trim(), svolgimento:d.svolgimento.trim(),
+      frequenza:d.frequenza, esempio:d.esempio.trim(),
+      campi:(d.campi||[]).map(f=>({label:(f.label||"").trim(), value:(f.value||"").trim()})).filter(f=>f.label||f.value),
+      log: prev? (prev.log||[]).slice() : [], created: prev? prev.created : new Date().toISOString(), updated:new Date().toISOString()};
+    persist(id,obj);
+    draft=null;
+    toast(ui.editId?"Pratica aggiornata":"Pratica aggiunta al quaderno");
+    go("pr",{prId:id, catId, editId:null});
+  }
+
+  /* ---------- form categoria ---------- */
+  let catDraft=null;
+  function renderEditCat(){
+    const existing = ui.editId ? catOf(ui.editId) : null;
+    if(!catDraft) catDraft = existing ? {name:existing.name, color:existing.color} : {name:"", color:COLORS[cats().length % COLORS.length].c};
+    pageEl.innerHTML = `<div class="crumb"><button data-act="cancel-cat">← Annulla</button></div>
+      <h1>${existing?"Modifica categoria":"Nuova categoria"}</h1>
+      <form class="form" id="catForm" novalidate>
+        <div class="f"><label for="cName">Nome</label><input type="text" id="cName" value="${esc(catDraft.name)}" placeholder="Es. Gestione delle emozioni"></div>
+        <div class="f"><label>Colore</label><div class="swatches" role="radiogroup" aria-label="Colore">${COLORS.map(x=>`<button type="button" class="sw" role="radio" aria-label="${x.n}" aria-checked="${catDraft.color===x.c}" data-act="pick-color" data-c="${x.c}" style="background:${x.c}"></button>`).join("")}</div></div>
+        <div class="err" id="catErr"></div>
+        <div class="row" style="margin-top:12px"><button class="btn solid" type="submit">Salva</button><button type="button" class="btn ghost" data-act="cancel-cat">Annulla</button></div>
+      </form>`;
+    $("#catForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const name=$("#cName").value.trim();
+      if(!name){ $("#catErr").textContent="Scrivi un nome per la categoria."; return; }
+      const id = ui.editId || uid("cat");
+      const base = existing ? clone(items.get(id)) : {type:"cat", order:cats().length, created:new Date().toISOString()};
+      persist(id, {...base, name, color:catDraft.color});
+      catDraft=null;
+      toast(existing?"Categoria aggiornata":"Categoria creata");
+      go("cat",{catId:id, editId:null});
+    });
+    setTimeout(()=>{ const t=$("#cName"); if(t && !t.value) t.focus(); },30);
+  }
+
+  /* ---------------- azioni ---------------- */
+  function markDone(id, dateStr){
+    const o=items.get(id); if(!o) return;
+    const n=clone(o); n.log = (n.log||[]).concat([dateStr || new Date().toISOString()]);
+    if(n.log.length>1000) n.log = n.log.slice(-1000);
+    persist(id,n);
+    toast("Registrata ✓ " + (dateStr? fmtDateTime(dateStr) : "oggi"));
+    render();
+  }
+  function undoLast(id){
+    const o=items.get(id); if(!o||!o.log||!o.log.length) return;
+    const n=clone(o); const sorted=n.log.slice().sort((a,b)=>parseLog(a)-parseLog(b)); sorted.pop(); n.log=sorted;
+    persist(id,n); toast("Ultima registrazione annullata"); render();
+  }
+
+  let dlgResolve=null;
+  function confirmDlg(title, text, yes){
+    $("#dlgTitle").textContent=title; $("#dlgText").textContent=text; $("#dlgYes").textContent=yes||"Elimina";
+    $("#overlay").classList.add("open"); $("#dlgNo").focus();
+    return new Promise(r=>dlgResolve=r);
+  }
+  function closeDlg(v){ $("#overlay").classList.remove("open"); if(dlgResolve){ dlgResolve(v); dlgResolve=null; } }
+  $("#dlgNo").onclick=()=>closeDlg(false);
+  $("#dlgYes").onclick=()=>closeDlg(true);
+  $("#overlay").addEventListener("click",e=>{ if(e.target.id==="overlay") closeDlg(false); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape" && $("#overlay").classList.contains("open")) closeDlg(false); });
+
+  let toastT=null;
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2400); }
+
+  document.addEventListener("click", async e=>{
+    const b=e.target.closest("[data-act]"); if(!b) return;
+    const act=b.dataset.act, id=b.dataset.id;
+    switch(act){
+      case "home": go("home"); break;
+      case "open-cat": go("cat",{catId:id}); break;
+      case "open-pr": go("pr",{prId:id}); break;
+      case "next-sug": ui.sugOffset++; render(); break;
+      case "done": markDone(id); break;
+      case "undo": undoLast(id); break;
+      case "other-date": ui.showOtherDate=!ui.showOtherDate; renderPr(); break;
+      case "save-date": { const v=$("#otherDate").value; if(!v) return; if(v>dayKey(new Date())){ toast("Scegli una data passata"); return; } ui.showOtherDate=false; markDone(id, v); break; }
+      case "new-pr": draft=null; go("edit",{editId:null, presetCat:b.dataset.cat||null}); break;
+      case "edit-pr": draft=null; go("edit",{editId:id}); break;
+      case "cancel-edit": draft=null; if(ui.editId) go("pr",{prId:ui.editId, editId:null}); else if(ui.presetCat) go("cat",{catId:ui.presetCat}); else go("home"); break;
+      case "add-field": syncDraft(); draft.campi.push({label:"",value:""}); renderEdit(); { const els=document.querySelectorAll('[data-cf="label"]'); els.length && els[els.length-1].focus(); } break;
+      case "rm-field": syncDraft(); draft.campi.splice(+b.dataset.i,1); renderEdit(); break;
+      case "pick-new-color": syncDraft(); draft._newCatColor=b.dataset.c; document.querySelectorAll('[data-act="pick-new-color"]').forEach(s=>s.setAttribute("aria-checked", s.dataset.c===draft._newCatColor)); break;
+      case "new-cat": catDraft=null; go("editcat",{editId:null}); break;
+      case "edit-cat": catDraft=null; go("editcat",{editId:id}); break;
+      case "pick-color": catDraft.name=$("#cName").value; catDraft.color=b.dataset.c; document.querySelectorAll('[data-act="pick-color"]').forEach(s=>s.setAttribute("aria-checked", s.dataset.c===catDraft.color)); break;
+      case "cancel-cat": catDraft=null; if(ui.editId) go("cat",{catId:ui.editId, editId:null}); else go("home"); break;
+      case "starter": {
+        const now=new Date().toISOString();
+        STARTER.forEach((s,i)=>persist(uid("cat"),{type:"cat", name:s.name, color:s.color, order:i, created:now}));
+        toast("Categorie create: rinominale o cambiane il colore quando vuoi"); render(); break;
+      }
+      case "del-pr": {
+        const o=items.get(id);
+        if(await confirmDlg("Eliminare la pratica?", `"${o.title}" e il suo registro verranno cancellati dal quaderno.`)){
+          const cat=o.catId; removeItem(id); toast("Pratica eliminata"); go(catOf(cat)?"cat":"home",{catId:cat});
+        }
+        break;
+      }
+      case "del-cat": {
+        const c=catOf(id); const ps=practices(id);
+        const msg = ps.length ? `La categoria "${c.name}" contiene ${ps.length===1?"1 pratica, che verrà eliminata":ps.length+" pratiche, che verranno eliminate"} insieme a lei.` : `La categoria "${c.name}" è vuota.`;
+        if(await confirmDlg("Eliminare la categoria?", msg)){
+          ps.forEach(p=>removeItem(p.id)); removeItem(id); toast("Categoria eliminata"); go("home");
+        }
+        break;
+      }
+    }
+  });
+
+  /* ---------------- avvio ---------------- */
+  function startLocal(){
+    mode="local"; loadLocal(); render();
+  }
+  async function start(){
+    render();
+    let db=null, user=null;
+    try{
+      if(window.claude && typeof window.claude.use==="function"){
+        [db,user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      }
+    }catch(e){ db=null; }
+    let id=null;
+    if(db && user){ try{ id = await user.id(); }catch(e){ id=null; } }
+    if(!db || !id){ startLocal(); return; }
+
+    col = db.collection("data/users/"+id);
+    let loaded=false;
+    const timer=setTimeout(()=>{ if(!loaded){ pageEl.innerHTML=`<p class="loading">Il quaderno non risponde ancora… attendi qualche secondo.</p>`; } },10000);
+    col.onSnapshot(snap=>{
+      items.clear();
+      snap.docs.forEach(d=>{ if(d.exists) items.set(d.id, d.data()); });
+      if(!snap.metadata.fromCache){ clearTimeout(timer); }
+      const first = !loaded; loaded=true; mode="db";
+      // non ridisegnare mentre si sta compilando un modulo
+      if(first || (ui.view!=="edit" && ui.view!=="editcat" && !$("#overlay").classList.contains("open") && !ui.showOtherDate)) render();
+      else { renderTabs(); renderFooter(); }
+    }, err=>{
+      clearTimeout(timer);
+      if(!loaded){ toast("Archivio online non disponibile: salvo in questo browser"); startLocal(); }
+      else handleErr(err);
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
