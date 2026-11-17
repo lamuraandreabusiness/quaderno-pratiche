@@ -7,6 +7,8 @@ import { etichettaFrequenza, stileColore } from '../lib/costanti';
 import { fa } from '../lib/date';
 import { fattaOggi, giorniDallUltima } from '../lib/registro';
 import { NonTrovata } from './NonTrovata';
+import { TEMI } from '../data/raccolta';
+import { normalizza } from '../lib/ricerca';
 import { LinkSostituisci } from '../components/LinkSostituisci';
 
 interface Props {
@@ -22,6 +24,8 @@ export function PaginaCategoria({ dati, id, oggi }: Props) {
   if (!c) return <NonTrovata cosa="categoria" />;
   const pratiche = dati.pratiche.filter((p) => p.categoriaId === id);
   const stile = stileColore(c.colore) as CSSProperties;
+  // Se la categoria ha il nome di un tema della Raccolta (es. "Respiro"), il link apre già quel tema
+  const temaCategoria = TEMI.find((t) => normalizza(t) === normalizza(c.nome.trim())) ?? '';
 
   async function elimina() {
     const n = pratiche.length;
@@ -56,7 +60,13 @@ export function PaginaCategoria({ dati, id, oggi }: Props) {
       </div>
 
       {pratiche.length === 0 ? (
-        <p className="vuoto">Nessuna pratica in questa categoria, per ora.</p>
+        <p className="vuoto">
+          Nessuna pratica in questa categoria, per ora.{' '}
+          <a href={percorso.raccolta('', temaCategoria)}>
+            {temaCategoria ? `Guarda le pratiche di ${temaCategoria} nella Raccolta` : 'Cerca nella Raccolta'}
+          </a>{' '}
+          o scrivine una tua.
+        </p>
       ) : (
         <ul className="elenco-pratiche">
           {pratiche.map((p) => {

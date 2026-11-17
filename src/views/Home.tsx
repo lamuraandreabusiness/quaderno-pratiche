@@ -97,13 +97,29 @@ export function Home({ dati, oggi, altre, unAltra }: Props) {
               );
             })}
           </ol>
+          {pratiche.length === 0 && (
+            <p className="sopra">
+              Le categorie sono pronte ma ancora vuote. Riempile con le pratiche già scritte della Raccolta, oppure
+              scrivine una tua.
+            </p>
+          )}
           <div className="riga sopra">
-            <a className="btn pieno" href={percorso.nuovaPratica()}>
+            {pratiche.length === 0 && (
+              <a className="btn pieno" href={percorso.raccolta()}>
+                Sfoglia la Raccolta
+              </a>
+            )}
+            <a className={`btn ${pratiche.length === 0 ? '' : 'pieno'}`} href={percorso.nuovaPratica()}>
               + Nuova pratica
             </a>
             <a className="btn" href={percorso.nuovaCategoria()}>
               + Nuova categoria
             </a>
+            {pratiche.length > 0 && (
+              <a className="btn leggero" href={percorso.raccolta()}>
+                Sfoglia la Raccolta →
+              </a>
+            )}
           </div>
         </>
       )}
@@ -112,10 +128,11 @@ export function Home({ dati, oggi, altre, unAltra }: Props) {
         <span className="tasca-titolo">Contenitore delle pratiche</span>
         <span className="tasca-conto">
           {dati.daProvare.length === 0
-            ? 'Niente in attesa: annota qui le pratiche che trovi in giro'
+            ? 'Niente da provare'
             : dati.daProvare.length === 1
               ? '1 pratica da provare'
               : `${dati.daProvare.length} pratiche da provare`}
+          {` · ${RACCOLTA.length} pratiche pronte nella Raccolta`}
         </span>
         <span className="tasca-freccia" aria-hidden="true">→</span>
       </a>
