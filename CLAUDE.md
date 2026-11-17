@@ -16,7 +16,7 @@ Nella cartella c'è `prototipo-quaderno-pratiche.html`: è il prototipo funziona
 - Dati in locale con IndexedDB tramite **Dexie** (local-first, funziona offline)
 - PWA con `vite-plugin-pwa` (installabile, icona, funziona offline)
 - CSS semplice (CSS modules o un solo file di stile): niente framework UI pesanti, la grafica è su misura
-- Font da Google Fonts: **Caveat** (titoli) e **Kalam** (testo)
+- Font Google **Caveat** (titoli) e **Kalam** (testo), contenuti nell'app tramite `@fontsource` (nessuna richiesta a server esterni)
 - Test con Vitest per la logica (suggerimento del giorno, serie di giorni, scadenze)
 - Pubblicazione statica (Netlify, Vercel o GitHub Pages)
 
@@ -173,7 +173,7 @@ Dopo ogni fase: avvia l'app, provala sul serio (anche con viewport da telefono) 
 ## Regole
 
 - Niente `alert`, `confirm`, `prompt`: finestre di dialogo dentro l'app
-- Niente tracciamento, analytics o chiamate a server esterni (a parte i font)
+- Niente tracciamento, analytics o chiamate a server esterni (nemmeno per i font)
 - Testi brevi, caldi, in italiano corretto
 - Nessuna dipendenza in più se non serve davvero
 

@@ -23,8 +23,11 @@ export function NelQuaderno({ dati, id }: { dati: Quaderno; id: string }) {
         svolgimento: v.svolgimento,
         frequenza: v.frequenza,
         esempio: v.esempio,
-        fonte: d.fonte,
-        campi: nota && nota !== v.obiettivo ? [{ etichetta: 'Nota', valore: nota }] : [],
+        fonte: d.fonte || v.fonte,
+        campi: [
+          ...(v.avvertenza ? [{ etichetta: 'Attenzione', valore: v.avvertenza }] : []),
+          ...(nota && nota !== v.obiettivo ? [{ etichetta: 'Nota', valore: nota }] : []),
+        ],
         origineRaccoltaId: v.id,
       }
     : { titolo: d.titolo, fonte: d.fonte, svolgimento: nota };

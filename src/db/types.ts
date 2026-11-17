@@ -70,4 +70,8 @@ export interface VoceRaccolta {
   svolgimento: string;
   frequenza: Frequenza;
   esempio: string;
+  /** Da dove viene la pratica (autore, libro, tradizione) */
+  fonte?: string;
+  /** Precauzioni da leggere prima di provarla */
+  avvertenza?: string;
 }

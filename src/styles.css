@@ -379,6 +379,12 @@ a { color: inherit; }
 .spunta input { width: 22px; height: 22px; accent-color: var(--inchiostro); flex: none; }
 .fine-pagina .btn { font-size: 16px; }
 .piede a { color: inherit; text-underline-offset: 3px; }
+.elenco-note, .passi { margin: 0; padding-left: 24px; }
+.passi { margin-top: 4px; }
+.riga-chiudi { justify-content: flex-end; margin-top: 4px; }
+.elenco-note li + li { margin-top: 0; }
+.voce .valore.fonte { font-size: 16px; color: var(--inchiostro-tenue); }
+.attenzione { margin: 0; padding: 0 0 0 12px; border-left: 4px solid #c99d1c; background: rgba(255, 243, 168, .55); }
 
 /* ---------- dialogo e avviso ---------- */
 .dialogo {

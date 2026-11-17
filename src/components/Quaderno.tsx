@@ -43,6 +43,8 @@ export function Quaderno({ categorie, categoriaAttiva, children }: Props) {
       </div>
       <p className="piede">
         I tuoi dati restano su questo dispositivo. <a href={percorso.impostazioni()}>Esporta un backup</a> ogni tanto.
+        <br />
+        <a href={percorso.note()}>Privacy e note</a>
       </p>
     </>
   );

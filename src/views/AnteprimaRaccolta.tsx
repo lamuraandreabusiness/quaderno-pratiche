@@ -73,7 +73,8 @@ export function AnteprimaRaccolta({ dati, id }: { dati: Quaderno; id: string }) 
         svolgimento: voce.svolgimento,
         frequenza: voce.frequenza,
         esempio: voce.esempio,
-        campi: [],
+        ...(voce.fonte ? { fonte: voce.fonte } : {}),
+        campi: voce.avvertenza ? [{ etichetta: 'Attenzione', valore: voce.avvertenza }] : [],
         origineRaccoltaId: voce.id,
       });
       // Se era in "Da provare", ora è nel quaderno: esce dal Contenitore
@@ -124,6 +125,18 @@ export function AnteprimaRaccolta({ dati, id }: { dati: Quaderno; id: string }) 
         <span className="frequenza-grande">{etichettaFrequenza(voce.frequenza)}</span>
       </section>
       {blocco('Esempio di utilizzo', voce.esempio)}
+      {voce.avvertenza && (
+        <section className="voce" aria-labelledby="t-attenzione">
+          <h2 id="t-attenzione">Attenzione</h2>
+          <p className="valore attenzione">{voce.avvertenza}</p>
+        </section>
+      )}
+      {voce.fonte && (
+        <section className="voce">
+          <h2>Fonte</h2>
+          <p className="valore fonte">{voce.fonte}</p>
+        </section>
+      )}
 
       <section className="registro azioni-raccolta" aria-label="Cosa vuoi farne?">
         {stato.tipo === 'nel-quaderno' ? (

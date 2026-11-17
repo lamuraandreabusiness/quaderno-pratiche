@@ -32,6 +32,10 @@ export function ParteRaccolta({ dati, q, tema }: Props) {
       <p className="tenue">
         Pratiche già scritte: sfogliale, provale, copiale nel tuo quaderno e cambiale come vuoi.
       </p>
+      <p className="tenue">
+        Sono strumenti di benessere, non una terapia: ascolta il tuo corpo e fermati se qualcosa non va.{' '}
+        <a href={percorso.note()}>Leggi l'avvertenza</a>
+      </p>
       <div className="modulo cerca">
         <label htmlFor="cerca-raccolta" className="sr">
           Cerca nella Raccolta

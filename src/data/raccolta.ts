@@ -12,6 +12,8 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       'Siediti con la schiena dritta.\nInspira contando fino a 4.\nTrattieni 4.\nEspira 4.\nResta vuoto 4.\nRipeti per 4–5 minuti.',
     esempio: 'Prima di una riunione o di una conversazione difficile.',
+    fonte: 'Nota come «box breathing», diffusa nell\'addestramento sportivo e militare.',
+    avvertenza: 'Se senti capogiri o fame d\'aria, accorcia i tempi o torna a respirare normalmente.',
   },
   {
     id: 'respirazione-4-7-8',
@@ -21,6 +23,8 @@ export const RACCOLTA: VoceRaccolta[] = [
     obiettivo: 'Rilassarsi e favorire il sonno.',
     svolgimento: 'Inspira dal naso per 4.\nTrattieni per 7.\nEspira dalla bocca per 8.\nRipeti 4 cicli.',
     esempio: 'A letto, quando la mente non si spegne.',
+    fonte: 'Tecnica proposta da Andrew Weil, ispirata al pranayama dello yoga.',
+    avvertenza: 'Le prime volte può dare un leggero capogiro: falla seduto o sdraiato. In gravidanza o con problemi cardiaci o respiratori, chiedi prima al medico se puoi trattenere il respiro.',
   },
   {
     id: 'body-scan',
@@ -31,6 +35,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       "Sdraiati.\nPorta l'attenzione ai piedi, poi sali lentamente: gambe, bacino, addome, petto, mani, braccia, spalle, collo, viso.\nSu ogni zona nota le sensazioni senza giudicarle.\n10–20 minuti.",
     esempio: 'La sera, per staccare dalla giornata.',
+    fonte: 'Pratica centrale del programma MBSR di Jon Kabat-Zinn.',
   },
   {
     id: 'radicamento-5-4-3-2-1',
@@ -40,6 +45,8 @@ export const RACCOLTA: VoceRaccolta[] = [
     obiettivo: "Tornare al presente quando l'ansia sale.",
     svolgimento: 'Nomina 5 cose che vedi, 4 che senti col tatto, 3 suoni, 2 odori, 1 sapore.',
     esempio: 'In un momento di agitazione in mezzo alla giornata.',
+    fonte: 'Tecnica di radicamento («grounding») molto usata per gestire l\'ansia.',
+    avvertenza: 'Aiuta nei momenti di agitazione, ma non sostituisce un aiuto professionale se l\'ansia è frequente o intensa.',
   },
   {
     id: 'diario-della-gratitudine',
@@ -49,6 +56,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     obiettivo: "Allenare l'attenzione a ciò che funziona.",
     svolgimento: 'Scrivi 3 cose per cui sei grato oggi, ognuna con il perché.',
     esempio: 'Prima di dormire, 5 minuti.',
+    fonte: 'Dalla psicologia positiva: l\'esercizio «tre cose belle» di Martin Seligman e gli studi di Robert Emmons.',
   },
   {
     id: 'pagine-del-mattino',
@@ -58,6 +66,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     obiettivo: 'Svuotare la mente e far emergere idee e pensieri ricorrenti.',
     svolgimento: 'Appena sveglio scrivi a mano, di getto, per circa tre pagine o 15 minuti, senza correggere né rileggere.',
     esempio: 'Nei periodi di blocco creativo o di confusione.',
+    fonte: 'Julia Cameron, «La via dell\'artista».',
   },
   {
     id: 'intenzione-del-giorno',
@@ -77,6 +86,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       'Rispondi:\nCosa è andato bene?\nCosa ho imparato?\nCosa faccio diversamente la prossima settimana?\nQuali sono le 3 priorità?',
     esempio: 'La domenica sera o il venerdì pomeriggio.',
+    fonte: 'Ispirata alla «weekly review» di David Allen («Getting Things Done»).',
   },
   {
     id: 'ruota-della-vita',
@@ -87,6 +97,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       "Disegna un cerchio diviso in 8 aree (es. salute, lavoro, relazioni, famiglia, crescita, denaro, svago, ambiente).\nDai a ciascuna un voto da 1 a 10.\nScegli un'area su cui lavorare e un primo passo concreto.",
     esempio: 'A inizio anno o in un momento di cambiamento.',
+    fonte: 'Strumento classico del coaching, attribuito a Paul J. Meyer.',
   },
   {
     id: 'obiettivi-dell-anno',
@@ -97,6 +108,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       'Scrivi da 3 a 5 obiettivi in positivo, specifici, misurabili e con una scadenza.\nPer ognuno: perché è importante, come saprai di averlo raggiunto, primo passo.',
     esempio: 'Nella prima settimana di gennaio.',
+    fonte: 'Criteri SMART per gli obiettivi (George T. Doran, 1981).',
   },
   {
     id: 'lettera-al-te-del-futuro',
@@ -117,6 +129,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       'Ricorda un momento in cui ti sei sentito pienamente capace.\nRivivilo: cosa vedevi, sentivi, provavi.\nQuando la sensazione è al massimo, fai un gesto preciso (es. pollice e indice uniti).\nRipeti più volte.\nUsa il gesto prima delle situazioni impegnative.',
     esempio: 'Prima di parlare in pubblico.',
+    fonte: 'Ancoraggio, tecnica della PNL di Richard Bandler e John Grinder.',
   },
   {
     id: 'passeggiata-consapevole',
@@ -127,6 +140,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       "Cammina più lentamente del solito per 10 minuti.\nPorta l'attenzione ai passi, al respiro, ai suoni intorno.\nQuando la mente vaga, torna ai piedi.",
     esempio: 'Nella pausa pranzo.',
+    fonte: 'Meditazione camminata, diffusa in Occidente da Thich Nhat Hanh.',
   },
   {
     id: 'risveglio-del-corpo',
@@ -137,6 +151,7 @@ export const RACCOLTA: VoceRaccolta[] = [
     svolgimento:
       '5 minuti in piedi: rotazioni di collo, spalle, polsi, anche e caviglie.\nAllungamento verso l\'alto.\nTre respiri profondi.',
     esempio: 'Appena alzati, prima del caffè.',
+    avvertenza: 'Movimenti dolci, senza forzare: fermati se senti dolore. Con problemi a schiena o articolazioni, adatta gli esercizi.',
   },
   {
     id: 'domanda-della-sera',

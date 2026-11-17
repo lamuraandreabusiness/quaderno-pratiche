@@ -6,6 +6,7 @@ import { aggiungiAlQuaderno, chiediPersistenza, leggiTutto, sostituisciTutto, st
 import { conta, convertiPrototipo, creaBackup, leggiBackup, nomeFileBackup, type DatiQuaderno } from '../lib/backup';
 import { formattaRegistrazione } from '../lib/date';
 import { SezionePromemoria } from '../components/SezionePromemoria';
+import { GuidaInstallazione } from '../components/GuidaInstallazione';
 import { datiPrototipo, scaricaFile, segnaBackup, segnaPrototipoGestito, ultimoBackup } from '../lib/locale';
 
 type Anteprima = { nomeFile: string; dati: DatiQuaderno; esportatoIl?: string; scartati: number };
@@ -114,6 +115,11 @@ export function Impostazioni({ dati }: { dati: Quaderno }) {
       </p>
       <h1 tabIndex={-1}>Impostazioni</h1>
 
+      <section aria-labelledby="t-installa">
+        <h2 id="t-installa">Installa l'app</h2>
+        <GuidaInstallazione />
+      </section>
+
       <section aria-labelledby="t-backup">
         <h2 id="t-backup">Backup</h2>
         <p>
@@ -219,6 +225,10 @@ export function Impostazioni({ dati }: { dati: Quaderno }) {
           </>
         )}
       </section>
+
+      <p className="sopra">
+        <a href={percorso.note()}>Privacy e note</a>
+      </p>
     </>
   );
 }

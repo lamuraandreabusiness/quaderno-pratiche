@@ -41,18 +41,6 @@ export default defineConfig({
         // Clic sulle notifiche e promemoria in sottofondo (vedi public/sw-promemoria.js)
         importScripts: ['sw-promemoria.js'],
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        runtimeCaching: [
-          {
-            // Font di Google: unica risorsa esterna, messa in cache per l'uso offline
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts',
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
       },
       devOptions: { enabled: false },
     }),
@@ -60,5 +48,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    // margine ampio: la prima formattazione delle date in italiano carica i dati della lingua e su una macchina carica può essere lenta
+    testTimeout: 30_000,
   },
 });

@@ -9,6 +9,7 @@ import { fattaOggi } from '../lib/registro';
 import { praticaDelGiorno } from '../lib/suggerimento';
 import { RACCOLTA } from '../data/raccolta';
 import { PropostaPrototipo } from '../components/PropostaPrototipo';
+import { InvitoInstallazione } from '../components/InvitoInstallazione';
 
 interface Props {
   dati: Quaderno;
@@ -123,6 +124,8 @@ export function Home({ dati, oggi, altre, unAltra }: Props) {
           </div>
         </>
       )}
+
+      {categorie.length > 0 && <InvitoInstallazione />}
 
       <a className="tasca" href={percorso.contenitore()}>
         <span className="tasca-titolo">Contenitore delle pratiche</span>

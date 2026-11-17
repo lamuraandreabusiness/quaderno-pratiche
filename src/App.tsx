@@ -17,6 +17,7 @@ import { NelQuaderno } from './views/NelQuaderno';
 import { AnteprimaRaccolta } from './views/AnteprimaRaccolta';
 import { Impostazioni } from './views/Impostazioni';
 import { ArrivoCondivisione } from './views/ArrivoCondivisione';
+import { Note } from './views/Note';
 
 export default function App() {
   return (
@@ -81,6 +82,8 @@ function Contenuto() {
         return <ModuloPratica key={p.rotta.id} dati={d} id={p.rotta.id} />;
       case 'contenitore':
         return <Contenitore dati={d} oggi={p.oggi} parte={p.rotta.parte} q={p.rotta.q} tema={p.rotta.tema} />;
+      case 'note':
+        return <Note />;
       case 'condividi':
         return <ArrivoCondivisione dati={d} />;
       case 'impostazioni':

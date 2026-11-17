@@ -13,6 +13,7 @@ export type Rotta =
   | { nome: 'voce-raccolta'; id: string }
   | { nome: 'impostazioni' }
   | { nome: 'condividi' }
+  | { nome: 'note' }
   | { nome: 'modifica-da-provare'; id: string }
   | { nome: 'nel-quaderno'; id: string }
   | { nome: 'non-trovata' };
@@ -35,6 +36,7 @@ export const percorso = {
     return '#/contenitore/raccolta' + (qs ? '?' + qs : '');
   },
   impostazioni: () => '#/impostazioni',
+  note: () => '#/note',
   voceRaccolta: (id: string) => `#/raccolta/${encodeURIComponent(id)}`,
   modificaDaProvare: (id: string) => `#/da-provare/${encodeURIComponent(id)}/modifica`,
   nelQuaderno: (id: string) => `#/da-provare/${encodeURIComponent(id)}/nel-quaderno`,
@@ -55,6 +57,7 @@ export function leggiRotta(hash: string): Rotta {
   if (a === 'contenitore' && (!b || b === 'raccolta') && !c) {
     return { nome: 'contenitore', parte: b ? 'raccolta' : 'da-provare', q: q.get('q') ?? '', tema: q.get('tema') ?? '' };
   }
+  if (a === 'note' && !b) return { nome: 'note' };
   if (a === 'condividi' && !b) return { nome: 'condividi' };
   if (a === 'impostazioni' && !b) return { nome: 'impostazioni' };
   if (a === 'raccolta' && b && !c) return { nome: 'voce-raccolta', id: b };
