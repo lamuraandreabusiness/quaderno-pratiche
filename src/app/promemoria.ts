@@ -42,21 +42,23 @@ export async function impostaPromemoria(dati: Partial<StatoPromemoria>) {
 }
 
 /** Mostra una notifica (dal service worker se c'è, così il tocco apre l'app). */
-export async function mostraNotifica(corpo: string, url = '/') {
+export async function mostraNotifica(corpo: string, url = './') {
+  const base = new URL(import.meta.env.BASE_URL, window.location.origin);
+  const icona = new URL('icons/icon-192.png', base).href;
   const opzioni: NotificationOptions = {
     body: corpo,
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    icon: icona,
+    badge: icona,
     tag: 'promemoria',
     lang: 'it',
-    data: { url },
+    data: { url: new URL(url, base).href },
   };
   const reg = await navigator.serviceWorker?.getRegistration();
   if (reg) return reg.showNotification('Quaderno delle pratiche', opzioni);
   const n = new Notification('Quaderno delle pratiche', opzioni);
   n.onclick = () => {
     window.focus();
-    window.location.hash = url.replace(/^\/?/, '').replace(/^#?/, '#');
+    window.location.hash = new URL(url, base).hash || '#/';
   };
 }
 

@@ -9,11 +9,11 @@ const CHIAVE_PROMEMORIA = '/__promemoria.json';
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = new URL((event.notification.data && event.notification.data.url) || '/', self.location.origin).href;
+  const url = new URL((event.notification.data && event.notification.data.url) || './', self.registration.scope).href;
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((finestre) => {
       for (const f of finestre) {
-        if (new URL(f.url).origin === self.location.origin && 'focus' in f) {
+        if (f.url.startsWith(self.registration.scope) && 'focus' in f) {
           return f.focus().then((c) => (c && 'navigate' in c ? c.navigate(url) : c));
         }
       }
@@ -44,11 +44,11 @@ async function controllaPromemoria() {
   const conPratica = s.giorno === oggi && s.titolo;
   await self.registration.showNotification('Quaderno delle pratiche', {
     body: conPratica ? `La tua pratica di oggi: ${s.titolo}` : 'La tua pratica di oggi ti aspetta nel quaderno.',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    icon: new URL('icons/icon-192.png', self.registration.scope).href,
+    badge: new URL('icons/icon-192.png', self.registration.scope).href,
     tag: 'promemoria',
     lang: 'it',
-    data: { url: conPratica && s.praticaId ? `/#/pratica/${encodeURIComponent(s.praticaId)}` : '/' },
+    data: { url: new URL(conPratica && s.praticaId ? `./#/pratica/${encodeURIComponent(s.praticaId)}` : './', self.registration.scope).href },
   });
   s.inviatoIl = oggi;
   await cache.put(CHIAVE_PROMEMORIA, new Response(JSON.stringify(s), { headers: { 'Content-Type': 'application/json' } }));

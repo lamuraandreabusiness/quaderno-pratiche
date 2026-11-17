@@ -3,7 +3,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// Cartella in cui viene pubblicata l'app: "/" in locale, "/quaderno-pratiche/" su GitHub Pages (vedi .github/workflows)
+declare const process: { env: Record<string, string | undefined> }; // evita di aggiungere @types/node solo per questo
+const base = process.env.BASE_PATH ?? '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -14,14 +19,15 @@ export default defineConfig({
         short_name: 'Quaderno',
         description: 'Il tuo quaderno delle pratiche di crescita personale.',
         lang: 'it',
-        start_url: '/',
-        scope: '/',
+        // percorsi relativi al manifest: funzionano in qualsiasi cartella
+        start_url: '.',
+        scope: '.',
         display: 'standalone',
         background_color: '#d9cbb4',
         theme_color: '#d9cbb4',
         // Condivisione verso l'app: da un browser o un'altra app si condivide un link e arriva in "Da provare"
         share_target: {
-          action: '/',
+          action: '.',
           method: 'GET',
           params: { title: 'title', text: 'text', url: 'url' },
         },
@@ -35,7 +41,6 @@ export default defineConfig({
         // Clic sulle notifiche e promemoria in sottofondo (vedi public/sw-promemoria.js)
         importScripts: ['sw-promemoria.js'],
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        navigateFallback: '/index.html',
         runtimeCaching: [
           {
             // Font di Google: unica risorsa esterna, messa in cache per l'uso offline

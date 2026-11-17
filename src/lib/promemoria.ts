@@ -40,14 +40,15 @@ export function devoAvvisare(s: StatoPromemoria, adesso: Date): boolean {
   return true;
 }
 
+/** Gli indirizzi sono relativi alla cartella dell'app ("./#/pratica/…"): funziona anche in una sottocartella. */
 export function testoPromemoria(s: StatoPromemoria, adesso: Date): { corpo: string; url: string } {
   if (s.giorno === chiaveGiorno(adesso) && s.titolo) {
     return {
       corpo: `La tua pratica di oggi: ${s.titolo}`,
-      url: s.praticaId ? `/#/pratica/${encodeURIComponent(s.praticaId)}` : '/',
+      url: s.praticaId ? `./#/pratica/${encodeURIComponent(s.praticaId)}` : './',
     };
   }
-  return { corpo: 'La tua pratica di oggi ti aspetta nel quaderno.', url: '/' };
+  return { corpo: 'La tua pratica di oggi ti aspetta nel quaderno.', url: './' };
 }
 
 /** Millisecondi fino al prossimo promemoria (oggi se non è ancora passato, altrimenti domani). */

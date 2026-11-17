@@ -61,7 +61,7 @@ describe('promemoria', () => {
 
   it('testo con la pratica del giorno, o generico se i dati sono vecchi', () => {
     const s = { ...base, giorno: '2026-11-16', titolo: 'Body scan', praticaId: 'p 1' };
-    expect(testoPromemoria(s, alle(9))).toEqual({ corpo: 'La tua pratica di oggi: Body scan', url: '/#/pratica/p%201' });
+    expect(testoPromemoria(s, alle(9))).toEqual({ corpo: 'La tua pratica di oggi: Body scan', url: './#/pratica/p%201' });
     expect(testoPromemoria(s, alle(9, 0, 17)).corpo).toBe('La tua pratica di oggi ti aspetta nel quaderno.');
   });
 
