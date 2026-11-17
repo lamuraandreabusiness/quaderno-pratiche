@@ -98,6 +98,10 @@ export const RACCOLTA: VoceRaccolta[] = [
       "Disegna un cerchio diviso in 8 aree (es. salute, lavoro, relazioni, famiglia, crescita, denaro, svago, ambiente).\nDai a ciascuna un voto da 1 a 10.\nScegli un'area su cui lavorare e un primo passo concreto.",
     esempio: 'A inizio anno o in un momento di cambiamento.',
     fonte: 'Strumento classico del coaching, attribuito a Paul J. Meyer.',
+    strumento: {
+      testo: 'Falla in versione digitale',
+      url: 'https://www.andrealamura.it/ruota-della-vita-strumento/',
+    },
   },
   {
     id: 'obiettivi-dell-anno',
@@ -169,3 +173,11 @@ export const RACCOLTA: VoceRaccolta[] = [
 export const TEMI: string[] = [...new Set(RACCOLTA.map((v) => v.tema))];
 
 export const voceRaccolta = (id: string) => RACCOLTA.find((v) => v.id === id);
+
+/** Campi personalizzati che una voce porta con sé quando la copi nel quaderno. */
+export function campiDaVoce(v: VoceRaccolta): { etichetta: string; valore: string }[] {
+  return [
+    ...(v.strumento ? [{ etichetta: 'Versione digitale', valore: v.strumento.url }] : []),
+    ...(v.avvertenza ? [{ etichetta: 'Attenzione', valore: v.avvertenza }] : []),
+  ];
+}

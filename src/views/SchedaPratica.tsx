@@ -115,7 +115,9 @@ export function SchedaPratica({ dati, id, oggi }: Props) {
         .map((f, i) => (
           <section className="voce" key={i}>
             <h2>{f.etichetta.trim() || 'Campo'}</h2>
-            <p className="valore">{f.valore}</p>
+            <p className="valore">
+              <Fonte valore={f.valore} />
+            </p>
           </section>
         ))}
       {p.fonte?.trim() && (

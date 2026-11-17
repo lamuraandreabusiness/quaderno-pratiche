@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Quaderno } from '../app/dati';
 import { percorso } from '../app/rotte';
 import { eliminaDaProvare, type DatiPratica } from '../db/repo';
-import { voceRaccolta } from '../data/raccolta';
+import { campiDaVoce, voceRaccolta } from '../data/raccolta';
 import { categoriaPerTema } from '../lib/statoRaccolta';
 import { ModuloPratica } from './ModuloPratica';
 import { NonTrovata } from './NonTrovata';
@@ -25,7 +25,7 @@ export function NelQuaderno({ dati, id }: { dati: Quaderno; id: string }) {
         esempio: v.esempio,
         fonte: d.fonte || v.fonte,
         campi: [
-          ...(v.avvertenza ? [{ etichetta: 'Attenzione', valore: v.avvertenza }] : []),
+          ...campiDaVoce(v),
           ...(nota && nota !== v.obiettivo ? [{ etichetta: 'Nota', valore: nota }] : []),
         ],
         origineRaccoltaId: v.id,

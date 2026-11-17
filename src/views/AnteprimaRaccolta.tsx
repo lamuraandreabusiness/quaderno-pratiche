@@ -3,7 +3,7 @@ import type { Quaderno } from '../app/dati';
 import { useAvviso } from '../app/avvisi';
 import { percorso } from '../app/rotte';
 import { creaCategoria, creaDaProvare, creaPratica, eliminaDaProvare } from '../db/repo';
-import { voceRaccolta } from '../data/raccolta';
+import { campiDaVoce, voceRaccolta } from '../data/raccolta';
 import { COLORI, etichettaFrequenza, stileColore } from '../lib/costanti';
 import { categoriaPerTema, coloreTema, statoVoce } from '../lib/statoRaccolta';
 import { SceltaColore } from '../components/SceltaColore';
@@ -74,7 +74,7 @@ export function AnteprimaRaccolta({ dati, id }: { dati: Quaderno; id: string }) 
         frequenza: voce.frequenza,
         esempio: voce.esempio,
         ...(voce.fonte ? { fonte: voce.fonte } : {}),
-        campi: voce.avvertenza ? [{ etichetta: 'Attenzione', valore: voce.avvertenza }] : [],
+        campi: campiDaVoce(voce),
         origineRaccoltaId: voce.id,
       });
       // Se era in "Da provare", ora è nel quaderno: esce dal Contenitore
@@ -120,6 +120,16 @@ export function AnteprimaRaccolta({ dati, id }: { dati: Quaderno; id: string }) 
 
       {blocco('Obiettivo della pratica', voce.obiettivo)}
       {blocco('Svolgimento', voce.svolgimento)}
+      {voce.strumento && (
+        <section className="voce">
+          <h2>Versione digitale</h2>
+          <p className="valore">
+            <a className="btn" href={voce.strumento.url} target="_blank" rel="noopener noreferrer">
+              {voce.strumento.testo} ↗<span className="sr"> (si apre in una nuova scheda)</span>
+            </a>
+          </p>
+        </section>
+      )}
       <section className="voce">
         <h2>Frequenza consigliata</h2>
         <span className="frequenza-grande">{etichettaFrequenza(voce.frequenza)}</span>

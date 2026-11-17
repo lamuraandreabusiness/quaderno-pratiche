@@ -74,4 +74,6 @@ export interface VoceRaccolta {
   fonte?: string;
   /** Precauzioni da leggere prima di provarla */
   avvertenza?: string;
+  /** Strumento online per farla (es. la versione digitale della Ruota della vita) */
+  strumento?: { testo: string; url: string };
 }

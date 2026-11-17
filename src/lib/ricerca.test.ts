@@ -12,6 +12,12 @@ describe('Raccolta', () => {
       expect(v.titolo && v.tema && v.obiettivo && v.svolgimento && v.esempio).toBeTruthy();
     }
   });
+  it('gli strumenti digitali hanno un indirizzo https', () => {
+    for (const v of RACCOLTA.filter((x) => x.strumento)) expect(v.strumento!.url).toMatch(/^https:\/\//);
+    expect(RACCOLTA.find((v) => v.id === 'ruota-della-vita')?.strumento?.url).toBe(
+      'https://www.andrealamura.it/ruota-della-vita-strumento/',
+    );
+  });
   it('temi', () => {
     expect(TEMI).toEqual(['Respiro', 'Meditazione', 'Scrittura', 'Coaching', 'Corpo e movimento']);
   });
