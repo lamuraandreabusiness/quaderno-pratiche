@@ -28,8 +28,9 @@ jobs:
       - run: npm test
       - run: npm run build
         env:
-          # l'app vive in https://<utente>.github.io/<repository>/
-          BASE_PATH: /${{ github.event.repository.name }}/
+          # l'app vive alla radice del suo dominio: https://quaderno.andrealamura.it/
+          # (senza dominio proprio sarebbe /${{ github.event.repository.name }}/)
+          BASE_PATH: /
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

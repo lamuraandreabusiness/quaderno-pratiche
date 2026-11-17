@@ -16,6 +16,6 @@ npm run preview   # prova della build
 
 ## Pubblicazione
 
-A ogni push su `main`, GitHub Actions esegue i test, costruisce l'app e la pubblica su GitHub Pages (`.github/workflows/pubblica.yml`). La variabile `BASE_PATH` indica la cartella in cui vive l'app (`/` in locale).
+A ogni push su `main`, GitHub Actions esegue i test, costruisce l'app e la pubblica su GitHub Pages (`.github/workflows/pubblica.yml`), all'indirizzo https://quaderno.andrealamura.it/ (record CNAME `quaderno` → `lamuraandreabusiness.github.io` nel DNS di Aruba). La variabile `BASE_PATH` indica la cartella in cui vive l'app (`/` in locale).
 
 La specifica completa del progetto è in `CLAUDE.md`.
